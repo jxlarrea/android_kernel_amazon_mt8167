@@ -4448,7 +4448,11 @@ CONFIG_ARCH_HAS_SG_CHAIN=y
 #
 # The bootloader drops what a boot image adds to its command line, so the
 # image's own options are compiled in after the bootloader's.
-CONFIG_CMDLINE="androidboot.selinux=permissive"
+# buildvariant=eng: the bootloader has the kernel map the system partition
+# as the root through the android-verity target, which insists on a verity
+# key ID from the command line unless the build is an eng one. With verity
+# off it maps the partition as is.
+CONFIG_CMDLINE="androidboot.selinux=permissive buildvariant=eng"
 CONFIG_CMDLINE_EXTEND=y
 # No dm-verity keys: the unlocked bootloader maps the system partition as is.
 CONFIG_SYSTEM_TRUSTED_KEYS=""
@@ -4477,6 +4481,3 @@ CONFIG_NETFILTER_XT_TARGET_TRACE=y
 CONFIG_NET_EMATCH=y
 CONFIG_NET_EMATCH_U32=y
 CONFIG_NF_CONNTRACK_SECMARK=y
-# The bootloader asks every normal boot to skip the ramdisk and mount the
-# system partition as a dm-verity root. LineageOS boots from the ramdisk.
-CONFIG_INITRAMFS_IGNORE_SKIP_FLAG=y
