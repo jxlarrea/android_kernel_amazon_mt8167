@@ -125,9 +125,21 @@ static int tlv3101_hw_params(struct snd_pcm_substream *substream,
 			AIC3101_PLL_ADC_FS_CLKIN_MCLK,
 			mt_soc_mclk_freq, params_rate(params));
 	} else {
+		/*
+		 * The ADCs' PLL runs from the TDM bit clock, so its dividers
+		 * have to match the clock this stream really makes. Eight
+		 * 32-bit slots at 16 kHz give 4.096 MHz, twice the 2.048 MHz
+		 * assumed here. With the 2.048 MHz dividers the PLL was asked
+		 * for 163.84 MHz, the ADCs ran near 21.26 kHz and every sound
+		 * came with copies around 5257 Hz.
+		 */
+		unsigned int bclk = mt_soc_mclk_freq;
+
+		if (snd_soc_params_to_bclk(params) == AIC31XX_FREQ_4096000)
+			bclk = AIC31XX_FREQ_4096000;
 		snd_soc_dai_set_pll(codec_dai, 0,
 			AIC3101_PLL_ADC_FS_CLKIN_PLL_BCLK,
-			mt_soc_mclk_freq, params_rate(params));
+			bclk, params_rate(params));
 	}
 
 	snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_CBS_CFS |
