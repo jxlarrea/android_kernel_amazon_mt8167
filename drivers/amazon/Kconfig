@@ -1,6 +1,8 @@
 config AMAZON_MT76X8_MODULES
-	bool "Amazon's MT7668 Wi-Fi and Bluetooth modules"
+	tristate "Amazon's MT7668 Wi-Fi and Bluetooth modules"
 	depends on MODULES && CFG80211
 	help
 	  Builds wlan_mt76x8_sdio.ko, wlan_mt76x8_sdio_prealloc.ko and
-	  btmtksdio.ko from drivers/amazon for the Echo Dot (3rd gen).
+	  btmtksdio.ko from drivers/amazon for the Echo Dot (3rd gen). Set it
+	  to m: LineageOS's build only installs modules when the config has
+	  an option set to m.
