@@ -1,0 +1,95 @@
+/dts-v1/;
+
+#include "donut.dtsi"
+
+/ {
+	model = "Amazon Donut HVT";
+	compatible = "amzn,donut-hvt", "amzn,donut";
+
+};
+
+&gpio_keys {
+	button@2 {
+		gpios = <&pio 42 1>;
+	};
+};
+
+&i2c0 {
+	tmp112_i2c0_4B: tmp112@4B {
+		compatible = "ti,tmp112em";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4B>;
+	};
+
+	tmp108_i2c0_4A: tmp108@4A {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4A>;
+	};
+
+	opt3001@44 {
+		compatible = "ti,opt3001";
+		reg = <0x44>;
+	};
+};
+
+&i2c1 {
+	tps62361_vproc_reg: tps62361_buck@60 {
+		compatible = "ti,tps62361";
+		reg = <0x60>;
+		regulator-name = "tps62361b";
+		regulator-min-microvolt = <300000>;
+		regulator-max-microvolt = <1300000>;
+		regulator-always-on;
+		ti,vsel1-state-high;
+	};
+};
+
+&i2c2 {
+	tmp108_i2c2_4B: tmp108@4B {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4B>;
+	};
+
+	tmp108_i2c2_4A: tmp108@4A {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4A>;
+	};
+
+	codec: tas2770@44 {
+		compatible = "ti,tas2770";
+		reg = <0x44>;
+		ti,reset-gpio = <&pio 10 0>;
+		ti,irq-gpio = <&pio 9 0>;
+		ti,asi-format = <0>; /* 0, i2S; 1, DSP;  */
+		ti,ppg = <0>; /* 0, 0dB default; 1， enable -2dB */
+		status = "ok";
+	};
+};
+/delete-node/ &issi_8ch;
+
+/* Replace Richtek RT5738 sys buck with TI TPS62361 */
+/delete-node/ &rt5748_vproc_reg;
+&ptp_od {
+	vproc-supply = <&tps62361_vproc_reg>;
+};
+
+&cpu0 {
+	proc-supply = <&tps62361_vproc_reg>;
+};
+
+&cpu1 {
+	proc-supply = <&tps62361_vproc_reg>;
+};
+
+&cpu2 {
+	proc-supply = <&tps62361_vproc_reg>;
+};
+
+&cpu3 {
+	proc-supply = <&tps62361_vproc_reg>;
+};
+
+#include "donut_thermal_zones.dtsi"

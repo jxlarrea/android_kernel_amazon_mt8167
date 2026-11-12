@@ -1,0 +1,97 @@
+/*
+ * Copyright (C) 2018 Amazon.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ */
+
+/dts-v1/;
+
+#include "donut.dtsi"
+
+/ {
+	model = "Amazon Donut EVT";
+	compatible = "amzn,donut-evt", "amzn,donut";
+
+};
+
+&gpio_keys {
+	button@2 {
+		gpios = <&pio 42 1>;
+	};
+};
+
+&gpio_privacy {
+	state-gpios = <&pio 108 GPIO_ACTIVE_LOW>;
+};
+
+&i2c0 {
+	tmp112_i2c0_4B: tmp112@4B {
+		compatible = "ti,tmp112em";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4B>;
+	};
+
+	tmp108_i2c0_4A: tmp108@4A {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4A>;
+	};
+
+	opt3001@44 {
+		compatible = "ti,opt3001";
+		reg = <0x44>;
+	};
+};
+
+&i2c2 {
+	tmp108_i2c2_4B: tmp108@4B {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4B>;
+	};
+
+	tmp108_i2c2_4A: tmp108@4A {
+		compatible = "ti,tmp108";
+		#thermal-sensor-cells = <0>;
+		reg = <0x4A>;
+	};
+
+	codec: tas2770@44 {
+		compatible = "ti,tas2770";
+		reg = <0x44>;
+		ti,reset-gpio = <&pio 10 0>;
+		ti,irq-gpio = <&pio 9 0>;
+		ti,asi-format = <0>; /* 0, i2S; 1, DSP;  */
+		ti,ppg = <0>; /* 0, 0dB default; 1， enable -2dB */
+		status = "ok";
+	};
+};
+
+&rt5748_vproc_reg {
+	compatible = "richtek,rt5738l";
+	/delete-property/ rt,vsel_gpio;
+};
+
+#include "donut_thermal_zones.dtsi"
+
+/delete-node/ &tmp112_i2c0_48_s;
+/delete-node/ &tmp103_i2c0_71_s;
+/delete-node/ &tmp108_i2c0_4A_s;
+/delete-node/ &tmp108_i2c2_49_s;
+
+/delete-node/ &issi_8ch;
+/delete-node/ &als_cm3232;
+/delete-node/ &tmp108_i2c2_49;
+/delete-node/ &tmp103_70;
+/delete-node/ &tmp103_73;
+/delete-node/ &tmp112_i2c0_48;
+/delete-node/ &tmp103_i2c0_71;
+/delete-node/ &tmp108_i2c0_4A;
