@@ -42,6 +42,27 @@
 #define SENSOR_CAL_SIZE 96
 char gbuffer[SENSOR_CAL_SIZE];
 
+/* idme_fos_flags=<hex> on the command line replaces what /proc/idme/fos_flags
+ * reports, for bring-up: Fire OS's init turns adb off unless bit 0 is set. */
+#ifdef CONFIG_IDME_FOS_FLAGS_BRINGUP
+static char idme_fos_flags[16] = "21";
+#else
+static char idme_fos_flags[16];
+#endif
+
+static int __init idme_fos_flags_param(char *str)
+{
+	strlcpy(idme_fos_flags, str, sizeof(idme_fos_flags));
+	return 1;
+}
+__setup("idme_fos_flags=", idme_fos_flags_param);
+
+static int idme_fos_flags_show(struct seq_file *seq, void *v)
+{
+	seq_puts(seq, idme_fos_flags);
+	return 0;
+}
+
 static int idme_proc_show(struct seq_file *seq, void *v)
 {
 	struct property *pp = (struct property *)seq->private;
@@ -55,6 +76,9 @@ static int idme_proc_show(struct seq_file *seq, void *v)
 
 static int idme_proc_open(struct inode *inode, struct file *file)
 {
+	if (idme_fos_flags[0] &&
+	    !strcmp(file->f_path.dentry->d_name.name, "fos_flags"))
+		return single_open(file, idme_fos_flags_show, NULL);
 	return single_open(file, idme_proc_show, PDE_DATA(inode));
 }
 

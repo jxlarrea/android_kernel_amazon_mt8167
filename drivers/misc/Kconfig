@@ -627,4 +627,11 @@ source "drivers/misc/genwqe/Kconfig"
 source "drivers/misc/echo/Kconfig"
 source "drivers/misc/cxl/Kconfig"
 source "drivers/misc/mediatek/Kconfig"
+config IDME_FOS_FLAGS_BRINGUP
+	bool "Report adb on in /proc/idme/fos_flags (bring-up only)"
+	default n
+	help
+	  Makes /proc/idme/fos_flags read 21 without idme_fos_flags= on the
+	  command line, so Fire OS turns adb on. For bring-up kernels only.
+
 endmenu
