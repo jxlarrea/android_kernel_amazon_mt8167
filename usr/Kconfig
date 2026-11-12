@@ -98,3 +98,12 @@ config RD_LZ4
 	help
 	  Support loading of a LZ4 encoded initial ramdisk or cpio buffer
 	  If unsure, say N.
+
+config INITRAMFS_IGNORE_SKIP_FLAG
+	bool "Force initramfs even when skip_initramfs is set"
+	default n
+	help
+	  Ignore skip_initramfs on the command line. The Echo Dot (3rd gen)'s
+	  bootloader always passes it for a normal boot, with a dm-verity root
+	  on the system partition. LineageOS boots from the boot image's
+	  ramdisk instead, whose init mounts the system partition itself.

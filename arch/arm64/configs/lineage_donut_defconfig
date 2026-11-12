@@ -4477,3 +4477,6 @@ CONFIG_NETFILTER_XT_TARGET_TRACE=y
 CONFIG_NET_EMATCH=y
 CONFIG_NET_EMATCH_U32=y
 CONFIG_NF_CONNTRACK_SECMARK=y
+# The bootloader asks every normal boot to skip the ramdisk and mount the
+# system partition as a dm-verity root. LineageOS boots from the ramdisk.
+CONFIG_INITRAMFS_IGNORE_SKIP_FLAG=y
