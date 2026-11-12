@@ -742,13 +742,20 @@ fail:
 static int is31fl3236_remove(struct i2c_client *client)
 {
 	struct is31fl3236_data *pdata = dev_get_platdata(&client->dev);
+	struct task_struct *stop_struct;
 	int ret = 0;
 
+	/* The animation thread takes the lock for every frame, so it is
+	 * stopped without the lock held. Stopping it under the lock hung
+	 * the shutdown whenever the boot animation was still playing. */
 	mutex_lock(&pdata->lock);
-	if (pdata->boot_anim_task) {
-		kthread_stop(pdata->boot_anim_task);
-		pdata->boot_anim_task = NULL;
-	}
+	stop_struct = pdata->boot_anim_task;
+	pdata->boot_anim_task = NULL;
+	mutex_unlock(&pdata->lock);
+	if (stop_struct)
+		kthread_stop(stop_struct);
+
+	mutex_lock(&pdata->lock);
 
 	ret = is31fl3236_write_reg(client, REG_RST, 0x0);
 	if (ret < 0) {
