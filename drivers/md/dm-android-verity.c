@@ -699,7 +699,8 @@ static int android_verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
 		/* Use the default keyid */
 		if (default_verity_key_id())
 			key_id = veritykeyid;
-		else if (!is_eng()) {
+		/* No key is needed to map the device as is, with verity off. */
+		else if (!is_eng() && !is_veritymode_disabled()) {
 			DMERR("veritykeyid= is not set");
 			handle_error();
 			return -EINVAL;

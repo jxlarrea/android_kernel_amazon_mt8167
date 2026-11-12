@@ -4447,12 +4447,8 @@ CONFIG_ARCH_HAS_SG_CHAIN=y
 # LineageOS 18.1: what Android 11 needs on top of Amazon's Fire OS 6 config
 #
 # The bootloader drops what a boot image adds to its command line, so the
-# image's own options are compiled in after the bootloader's.
-# buildvariant=eng: the bootloader has the kernel map the system partition
-# as the root through the android-verity target, which insists on a verity
-# key ID from the command line unless the build is an eng one. With verity
-# off it maps the partition as is.
-CONFIG_CMDLINE="androidboot.selinux=permissive buildvariant=eng"
+# image's own options are compiled in. They come before the bootloader's.
+CONFIG_CMDLINE="androidboot.selinux=permissive"
 CONFIG_CMDLINE_EXTEND=y
 # No dm-verity keys: the unlocked bootloader maps the system partition as is.
 CONFIG_SYSTEM_TRUSTED_KEYS=""
